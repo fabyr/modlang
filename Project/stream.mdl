@@ -1,0 +1,70 @@
+public class stream
+{
+	public get long length {}
+	public get long position {}
+	public set long position {}
+
+	public long read(byte[] buffer, long offset, long length) {}
+	public bool write(byte[] buffer, long offset, long length) {}
+	public bool write(byte b) {}
+	
+	public long read(byte[] buffer, long offset)
+		return read(buffer, offset, buffer.length - offset);
+	
+	public long read(byte[] buffer)
+		return read(buffer, 0);
+	
+	public bool write(byte[] buffer, long offset)
+		return write(buffer, offset, buffer.length - offset);
+	
+	public bool write(byte[] buffer)
+		return write(buffer, 0);
+}
+
+public class bytestream : stream
+{
+	private const long BLOCK_SIZE = 64;
+	
+	private byte[] _buffer;
+	private long _length = 0;
+	private long _pos = 0;
+
+	public this() 
+	{
+		_buffer = new byte[BLOCK_SIZE];
+	}
+	
+	private void expand(long req)
+	{
+		long sz = (long)(math.ceiling((_pos + req) / (float)BLOCK_SIZE) * BLOCK_SIZE);
+		if(_buffer.length < sz)
+			_buffer = array.resize(_buffer, sz);
+	}
+	
+	public get long length { return _length; }
+	public get long position { return _pos; }
+	public set long position { return _pos = value; }
+	
+	public long read(byte[] buffer, long offset, long length)
+	{
+		long r = math.min(length, _length - _pos);
+		array.copy(_buffer, _pos, buffer, offset, r);
+		_pos += r;
+		return r;
+	}
+	public bool write(byte[] buffer, long offset, long length) 
+	{
+		expand(length);
+		array.copy(buffer, offset, _buffer, _pos, length);
+		_pos += length;
+		_length += length;
+		return true;
+	}
+	public bool write(byte b) 
+	{
+		expand(1);
+		_buffer[_pos++] = b;
+		_length++;
+		return true;
+	}
+}

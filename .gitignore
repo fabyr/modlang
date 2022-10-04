@@ -1,0 +1,11 @@
+Project/ModlangNet6/.vscode/
+Project/ModlangNet6/build/
+Project/ModlangNet6/publish/
+Project/ModlangNet6/Modlang/obj/
+Project/ModlangNet6/Modlang.CommonUtilities/obj/
+Project/ModlangNet6/Modlang.Runtime/obj/
+Project/ModlangNet6/Modlang.Runtime.Serialization/obj/
+
+Project/ModlangNet6/ModlangInterpreter/obj/
+Project/ModlangNet6/ModlangRuntimeSerializer/obj/
+Project/ModlangNet6/ModlangShell/obj/

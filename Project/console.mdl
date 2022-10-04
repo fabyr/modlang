@@ -1,0 +1,97 @@
+public class console 
+{
+	private static int _bg = 0;
+	private static int _fg = 15;
+	private static bool _hasInitialized = false;
+	
+	private static void init_colors()
+	{
+		if(_hasInitialized)
+			return;
+		byte v = __fnative_consolegcolor__();
+		_bg = (int)((v >> 4) & 0x0F);
+		_fg = (int)(v & 0x0F);
+	}
+	
+	public static void set_colors(int back, int fore)
+	{
+		init_colors();
+		__fnative_consolescolor__(back, fore);
+		_bg = back;
+		_fg = fore;
+	}
+	
+	public static void set_back_color(int back)
+	{
+		init_colors();
+		__fnative_consolescolor__(back, _fg);
+		_bg = fore;
+	}
+	
+	public static void set_fore_color(int fore)
+	{
+		init_colors();
+		__fnative_consolescolor__(_bg, fore);
+		_fg = fore;
+	}
+	
+	public static char readchar()
+	{
+		return __fnative_readkey__();
+	}
+	
+	public static string readline() {
+		char r;
+		string res = "", clearer;
+		int len = 0;
+		while((r = readchar()) != 0x0D)
+		{
+			if(r == 0x08 && (len = res.length) > 0)
+			{
+				clearer = string.repeat(' ', len);
+				res = res.substring(0, len - 1);
+				print('\r');
+				print(clearer);
+				print('\r');
+				print(res);
+			}
+			else if(r != 0x0A)
+			{
+				res += (char)r;
+				print((char)r);
+			}
+		}
+		print("\r\n");
+		return res;
+	}
+}
+
+public static void print(object obj)
+{
+	if(obj == null)
+		print("<NULL>");
+	else
+		print(obj.tostring());
+}
+
+public static void println(object obj)
+{
+	print(obj);
+	println();
+}
+
+public static void print(string str)
+{
+	__fnative_print__(str);
+}
+
+public static void println(string str)
+{
+	print(str);
+	println();
+}
+
+public static void println()
+{
+	print("\n");
+}

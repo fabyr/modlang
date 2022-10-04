@@ -1,0 +1,570 @@
+/*
+ * Whenever setting _native_value_ of an object,
+ * internally _native_value_ is always fetched from the right value by default.
+ * so someobject._native_value_ = this._native_value_;
+ * is the same as someobject._native_value_ = this;
+ */
+
+public class object
+{
+	public bool equals(object other)
+	{
+		return __fnative_equality__(this, other);
+	}
+	
+	public long hashcode()
+	{
+		return __fnative_hashcode__(this);
+	}
+	
+	public string tostring()
+	{
+		return __fnative_tostring__(this);
+	}
+	
+	public object gettype()
+	{
+		return _type_;
+	}
+	
+	public string operator +(string other)
+	{
+		return this.tostring() + other;
+	}
+}
+
+public primitive class string
+{
+	public int length;
+	
+	public this() 
+	{ 
+		length = __fnative_strlen__(this);
+	}
+	
+	public this(char[] chars) 
+	{
+		string build = "";
+		for(int i = 0; i < chars.length; i++)
+			build += chars[i];
+		
+		_native_value_ = build;
+		_ctor_();
+	}
+	
+	public this(byte[] bytes)
+	{
+		string build = "";
+		for(int i = 0; i < bytes.length; i++)
+			build += (char)bytes[i];
+		
+		_native_value_ = build;
+		_ctor_();
+	}
+	
+	public get char operator this[long idx]
+	{
+		return __fnative_strgcharat__(this, (int)idx);
+	}
+	
+	public set char operator this[long idx]
+	{
+		_native_value_ = __fnative_strscharat__(this, (int)idx, value);
+		return value;
+	}
+	
+	public get char operator this[int idx]
+	{
+		return __fnative_strgcharat__(this, idx);
+	}
+	
+	public set char operator this[int idx]
+	{
+		_native_value_ = __fnative_strscharat__(this, idx, value);
+		return value;
+	}
+	
+	public char getchar(int idx) 
+	{
+		return __fnative_strgcharat__(this, idx);
+	}
+	
+	public byte[] getbytes() // NOTE: This is just a quick and temporary method for testing stuff, TODO: Encoding
+	{
+		byte[] res = new byte[length];
+		for(int i = 0; i < res.length; i++)
+			res[i] = (byte)this[i];
+		return res;
+	}
+	
+	public char[] get_char_array()
+	{
+		char[] res = new char[length];
+		for(int i = 0; i < res.length; i++)
+			res[i] = this[i];
+		return res;
+	}
+	
+	public string substring(int start) 
+	{
+		return substring(start, length - start);
+	}
+	
+	public string substring(int start, int length) 
+	{
+		string res = "";
+		for(int i = 0; i < length; i++)
+			res += this[i + start];
+		return res;
+	}
+	
+	public static string repeat(char c, int len) 
+	{
+		string res = "";
+		for(int i = 0; i < len; i++)
+			res += c;
+		return res;
+	}
+	
+	public static string pad(char c, int len, bool left)
+	{
+		int padLen = len - length;
+		string result = this;
+		for(int i = 0; i < padLen; i++)
+			if(left)
+				result = c + result;
+			else
+				result = result + c;
+		return result;
+	}
+	
+	public string tostring()
+	{
+		return this;
+	}
+	
+	public bool operator ==(string other)
+	{
+		return equals(other);
+	}
+	
+	public bool operator !=(string other)
+	{
+		return !equals(other);
+	}
+	
+	public string operator +(string other)
+	{
+		return __fnative_strconcat__(this, other);
+	}
+	
+	public string operator +(object other)
+	{
+		return this + other.tostring();
+	}
+	
+	public string operator *(int other) 
+	{
+		string res = "";
+		for(int i = 0; i < other; i++)
+			res += this;
+		return res;
+	}
+}
+
+public primitive class bool 
+{
+	public string tostring()
+	{
+		if(this)
+			return "true";
+		else
+			return "false";
+	}
+}
+
+// Those numeric types are mostly implemented hard-coded in the interpreter
+
+public primitive class uint
+{ 
+	public const uint min_value = 0u;
+	public const uint max_value = 4294967295u;
+	
+	public static uint parse(char c)
+	{
+		return (uint)(c - '0');
+	}
+	
+	public static uint parse(string str)
+	{
+		uint res = 0;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		return res;
+	}
+}
+
+public primitive class int
+{
+	public prefix string operator §()
+	{
+		if(this == 1287)
+			return "Abs. 1:\r\n\tDas Erledigen der 12.8.7 ist eine Pflicht jedes Bürgers.\r\n\tDas Verweigern stellt eine strenge Ordnungswidrigkeit nach §10 OWiG dar.";
+		return "Paragraph nicht gefunden :/";
+	}
+
+	public const int max_value = 2147483647;
+	public const int min_value = (-max_value) - 1; // literal problem
+
+	public int operator **(int other) // power
+	{
+		return (int)(((long)this) ** other);
+	}
+	
+	public postfix int operator !() // fakultät
+	{
+		return (int)(((long)this)!);
+	}
+	
+	public postfix int operator ²()
+	{
+		return this * this;
+	}
+	
+	public postfix int operator ³()
+	{
+		return this * this * this;
+	}
+	
+	public static int parse(char c)
+	{
+		return (int)(c - '0');
+	}
+	
+	public static int parse(string str)
+	{
+		int res = 0;
+		bool negate = false;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((i == 0) && (str[i] == '-'))
+                        negate = true;
+                    else
+                        continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		if(negate)
+			res = -res;
+		return res;
+	}
+}
+
+public primitive class byte
+{
+	public const byte min_value = (byte)0;
+	public const byte max_value = (byte)255;
+
+	public postfix byte operator !() // fakultät
+	{
+		return (byte)(((long)this)!);
+	}
+	
+	public postfix byte operator ²()
+	{
+		return this * this;
+	}
+	
+	public postfix byte operator ³()
+	{
+		return this * this * this;
+	}
+	
+	public static byte parse(char c)
+	{
+		return (byte)((uint)(c - '0'));
+	}
+	
+	public static byte parse(string str)
+	{
+		byte res = 0;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		return res;
+	}
+}
+
+public primitive class sbyte
+{ 
+	public const sbyte min_value = (sbyte)(-128);
+	public const sbyte max_value = (sbyte)127;
+	
+	public static sbyte parse(char c)
+	{
+		return (sbyte)((int)(c - '0'));
+	}
+	
+	public static sbyte parse(string str)
+	{
+		sbyte res = 0;
+		bool negate = false;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((i == 0) && (str[i] == '-'))
+                        negate = true;
+                    else
+                        continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		if(negate)
+			res = -res;
+		return res;
+	}
+}
+
+public primitive class short
+{ 
+	public const short min_value = (short)(-32768);
+	public const short max_value = (short)32767;
+	
+	public static short parse(char c)
+	{
+		return (short)((int)(c - '0'));
+	}
+	
+	public static short parse(string str)
+	{
+		short res = 0;
+		bool negate = false;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((i == 0) && (str[i] == '-'))
+                        negate = true;
+                    else
+                        continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		if(negate)
+			res = -res;
+		return res;
+	}
+}
+
+public primitive class ushort
+{ 
+	public const ushort min_value = (ushort)0;
+	public const ushort max_value = (ushort)65535;
+	
+	public static ushort parse(char c)
+	{
+		return (ushort)((uint)(c - '0'));
+	}
+	
+	public static ushort parse(string str)
+	{
+		ushort res = 0;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		return res;
+	}
+}
+
+public primitive class long
+{
+	public const long max_value = 9223372036854775807l;
+	public const long min_value = (-max_value) - 1; // problem with literal
+
+	public postfix long operator !() // fakultät
+	{
+		long r = 1;
+		for(long i = 1; i <= this; i++)
+			r *= i;
+		return r;
+	}
+	
+	public postfix long operator ²() // square
+	{
+		return this * this;
+	}
+	
+	public postfix long operator ³() // cube
+	{
+		return this * this * this;
+	}
+	
+	public long operator **(int other) // power
+	{
+		if(other >= 0)
+		{
+			long r = 1;
+			for(int i = 0; i < other; i++)
+				r *= this;
+			return r;
+		}
+		else
+		{
+			double r = 1.0;
+			for(int i = 0; i < -other; i++)
+				r /= this;
+			return r;
+		}
+	}
+	
+	public static long parse(char c)
+	{
+		return (long)((int)(c - '0'));
+	}
+	
+	public static long parse(string str)
+	{
+		long res = 0l;
+		bool negate = false;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((i == 0) && (str[i] == '-'))
+                        negate = true;
+                    else
+                        continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		if(negate)
+			res = -res;
+		return res;
+	}
+}
+
+public primitive class ulong
+{ 
+	public const ulong min_value = 0ul;
+	public const ulong max_value = 9223372036854775807ul;
+	
+	public static ulong parse(char c)
+	{
+		return (ulong)((int)(c - '0'));
+	}
+	
+	public static ulong parse(string str)
+	{
+		ulong res = 0ul;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				continue; // invalid
+			else
+				res = res * 10 + parse(str[i]);
+		
+		return res;
+	}
+}
+
+public primitive class double
+{ 
+	public const double min_value = -1.7976931348623157e308;
+	public const double max_value = 1.7976931348623157e308;
+	
+	public static double parse(char c)
+	{
+		return (double)((int)(c - '0'));
+	}
+	
+	public static double parse(string str)
+	{
+		double res = 0.0;
+		bool afterComma = false;
+		double afterCommaPow = 1.0;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((str[i] == '.') && !afterComma)
+                        afterComma = true;
+                    else
+                        continue; // invalid
+			else 
+			{
+				if(afterComma)
+					res += (afterCommaPow *= 0.1) * parse(str[i]);
+				else
+					res = res * 10.0 + parse(str[i]);
+			}
+				
+		
+		return res;
+	}
+}
+
+public primitive class float
+{ 
+	public const float min_value = -3.40282347e38f;
+	public const float max_value = 3.40282347e38f;
+	
+	public static float parse(char c)
+	{
+		return (float)((int)(c - '0'));
+	}
+	
+	public static float parse(string str)
+	{
+		float res = 0.0f;
+		bool afterComma = false;
+		float afterCommaPow = 1.0f;
+		for(long i = 0; i < str.length; i++)
+			if ((str[i] < '0') || (str[i] > '9'))
+				if ((str[i] == '.') && !afterComma)
+                        afterComma = true;
+                    else
+                        continue; // invalid
+			else 
+			{
+				if(afterComma)
+					res += (afterCommaPow *= 0.1f) * parse(str[i]);
+				else
+					res = res * 10.0f + parse(str[i]);
+			}
+				
+		
+		return res;
+	}
+}
+
+public primitive class char
+{ 
+	public const char min_value = '\0';
+	public const char max_value = '\uffff';
+}
+
+public class system
+{
+	public static long time()
+	{
+		return __fnative_systime__();
+	}
+}
+
+public static void exit(int code)
+{
+	__fnative_exit__(code);
+}
+
+public static void exit()
+{
+	exit(-1);
+}
+
+using math;
+using array_utils;
+using console;
+using stream;
+using random;

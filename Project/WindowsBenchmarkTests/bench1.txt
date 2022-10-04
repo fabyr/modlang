@@ -1,0 +1,45 @@
+Bench1 (Debug):
+
+#1 BaseCase - 15875ms - 15781ms
+#2 (No StackFrameUnion) - 10688ms - 10860ms
+#3 Fruther improvement 1 - 10750ms - 10734ms
+#4 Further 2 - 10578ms - 10344ms
+#5 Further 3 (Replacing definite Execute Calls to the corresponding ExecuteInternal) - 10359ms - 10344ms
+#6 Further 4 (Own SequenceEqual implementation) - 10187ms - 10203ms
+#7 Futher 5 (Specific SequenceEqual for MlType) - 10187ms - 10157ms
+#8 Futher 6 (More Linq-Removal) - 9500ms - 9547ms
+#9 Just some stuff - 9157ms - 9125ms
+#10 No automatic properties, just fields - 8218ms - 8063ms
+
+- Between BaseCase - 7938ms - 8000ms
+
+#1 7860ms - 7938ms
+
+#2 7125ms - 7172ms
+
+#3 7094ms - 7078ms
+
+#4 LinkedList StackFrame approach - 7000ms - 7016ms
+
+#5 StackFrame remove further properties - 6922ms - 6906ms
+
+#6 CurrentClassContextObject remove property - 6829ms - 6766ms
+
+#7 Removed unecessary cloning - 5843ms - 5765ms
+
+
+RegexRepl type in expression:
+	dynamic( S?TagFunc)
+	
+	Repl:
+	object$1
+	
+	
+	
+	
+	
+
+
+
+
+9750ms - 9672ms

@@ -1,0 +1,270 @@
+
+// NOTE: this class is obsolete
+public class math 
+{
+	public const double PI = 3.1415926535897931;
+	public const double E = 2.7182818284590451;
+	
+	public static double abs(double value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static float abs(float value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static long abs(long value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static int abs(int value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static short abs(short value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static sbyte abs(sbyte value)
+	{
+		if(value < 0)
+			return -value;
+		return value;
+	}
+	
+	public static double floor(double value) 
+	{
+		if(value < 0)
+			return value - (1.0 - abs(value % 1.0));
+		return value - abs(value % 1.0);
+	}
+	
+	public static double truncate(double value)
+	{
+		if(value < 0)
+			return value + abs(value % 1.0);
+		return value - abs(value % 1.0);
+	}
+	
+	public static double ceiling(double value) 
+	{
+		if(value < 0)
+			return value + abs(value % 1.0);
+		return value + (1.0 - abs(value % 1.0));
+	}
+	
+	public static double round(double value) 
+	{
+		double m = value % 1.0;
+		if(m >= 0.5)
+			return ceiling(value);
+		else if(m < -0.5)
+			return floor(value);
+		else 
+			return truncate(value);
+	}
+	
+	public static double max(double a, double b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static float max(float a, float b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static ulong max(ulong a, ulong b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static long max(long a, long b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static uint max(uint a, uint b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static int max(int a, int b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static ushort max(ushort a, ushort b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static short max(short a, short b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static byte max(byte a, byte b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static sbyte max(sbyte a, sbyte b)
+	{
+		if(a > b)
+			return a;
+		return b;
+	}
+	
+	public static double min(double a, double b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static float min(float a, float b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static ulong min(ulong a, ulong b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static long min(long a, long b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static uint min(uint a, uint b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static int min(int a, int b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static ushort min(ushort a, ushort b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static short min(short a, short b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static byte min(byte a, byte b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static sbyte min(sbyte a, sbyte b)
+	{
+		if(a < b)
+			return a;
+		return b;
+	}
+	
+	public static double sqrt(double value) 
+	{
+		double val, low, high, mid, oldmid, midsqr;
+		val = abs(value);
+		
+		low = 0;
+		high = mid = val;
+		oldmid = -1;
+		
+		// Keep going until accurate enough.
+		while (abs(oldmid - mid) >= 0.0000000001) {
+			oldmid = mid;
+
+			// Get midpoint and see if we need lower or higher.
+
+			mid = (high + low) / 2;
+			midsqr = mid * mid;
+			if (mid * mid > val) {
+				high = mid;
+			} else {
+				low = mid;
+			}
+		}
+		
+		return mid;
+	}
+	
+	public static double map(double x, double in_min, double in_max, double out_min, double out_max)
+	{
+	  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	}
+	
+	public static float map(float x, float in_min, float in_max, float out_min, float out_max)
+	{
+	  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+	}
+	
+	public static double fact(int n)
+	{
+		double res = 1;
+		for(;n>0;n--)
+			res *= n;
+		return res;
+	}
+	
+	public static int posmod(int n, int m) {
+        return ((n % m) + m) % m;
+    }
+}

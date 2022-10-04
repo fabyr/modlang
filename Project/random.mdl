@@ -1,0 +1,47 @@
+public class random
+{
+	private int[] state;
+    private int pos;
+
+	public this()
+	{
+		_ctor_((int)(system.time() % int.max_value));
+	}
+	
+	public this(int seed)
+	{
+		state = new int[55];
+ 
+        int[] temp = new int[55];
+        temp[0] = math.posmod(seed, int.max_value);
+        temp[1] = 1;
+        for(int i = 2; i < 55; ++i)
+            temp[i] = math.posmod(temp[i - 2] - temp[i - 1], int.max_value);
+ 
+        for(int i = 0; i < 55; ++i)
+            state[i] = temp[(34 * (i + 1)) % 55];
+ 
+        pos = 54;
+        for(int i = 55; i < 220; ++i)
+            next();
+	}
+	
+	public int next()
+	{
+		int temp = math.posmod(state[(pos + 1) % 55] - state[(pos + 32) % 55], int.max_value);
+        pos = (pos + 1) % 55;
+        state[pos] = temp;
+        return temp;
+	}
+	
+	public double nextdouble()
+		return (next() / (double)int.max_value) * 0.5 + 0.5;
+		
+	public int next(int max)
+		return next(0, max);
+	
+	public int next(int min, int max)
+	{
+		return math.posmod(next(), max - min) + min;
+	}
+}

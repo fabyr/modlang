@@ -1,0 +1,816 @@
+public class bigint
+{
+	private class bigint10
+	{
+		private const int NUMBASE = 10;
+		private int[] data;
+		private long size;
+		
+		public string tostring()
+		{
+			string output = "";
+			for(long i = size - 1; i >= 0; i--)
+				output += data[i];
+			
+			return output;
+		}
+		
+		public static bigint10 make(long n)
+		{
+			if(n < 0)
+				return null;
+			bigint10 res = new bigint10(20);
+			long size = 20;
+			if (n == 0)
+			{
+				size = 1;
+				res.data[size] = 0;
+			}
+			else
+			{
+				size = 0;
+				while (n > 0)
+				{
+					res.data[size] = (int)(n % NUMBASE);
+					n /= NUMBASE;
+					size++;
+				}
+			}
+			res.data = (int[])array.resize(res.data, size);
+			res.size = size;
+			
+			return res;
+		}
+		
+		public this(long sz)
+		{
+			data = new int[sz];
+			array.fill(data, 0);
+			size = sz;
+		}
+		
+		public this(bigint10 of)
+		{
+			data = new int[of.size];
+			size = of.size;
+			array.copy(of.data, data, size);
+		}
+		
+		public static bigint10 mul(bigint10 a, bigint10 b)
+		{
+			long i, j;
+			int temp, trans = 0;
+
+			bigint10 res = new bigint10(a.size + b.size - 1);
+			array.fill(res.data, 0);
+
+			for (i = 0; i < a.size; i++)
+				if (a.data[i] != 0)
+					for (j = 0; j < b.size; j++)
+						if (b.data[j] != 0)
+							res.data[i + j] += a.data[i] * b.data[j];
+
+			for (i = 0; i < res.size; i++)
+			{
+				temp = res.data[i] + trans;
+				res.data[i] = temp % NUMBASE;
+				trans = temp / NUMBASE;
+			}
+
+			if (trans > 0)
+			{
+				res.data = (int[])array.resize(res.data, res.size + 1);
+				res.data[res.size] = trans % NUMBASE;
+				(res.size)++;
+				trans /= NUMBASE;
+			}
+
+			return res;
+		}
+		
+		public static bigint10 add(bigint10 a, bigint10 b)
+		{
+			bigint10 res = new bigint10(math.max(a.size, b.size) + 1);
+			array.copy(a.data, res.data, a.size);
+			int trans = 0, temp;
+			long i;
+
+			for (i = 0; i < b.size; i++)
+			{
+				temp = res.data[i] + b.data[i] + trans;
+				res.data[i] = temp % NUMBASE;
+				trans = temp / NUMBASE;
+			}
+
+			for (i = b.size; ((i < a.size) && (trans > 0)); i++)
+			{
+				temp = res.data[i] + trans;
+				res.data[i] = temp % NUMBASE;
+				trans = temp / NUMBASE;
+			}
+
+			if (trans > 0)
+			{
+				res.data = (int[])array.resize(res.data, res.size + 1);
+				res.data[res.size] = trans % NUMBASE;
+				(res.size)++;
+				trans /= NUMBASE;
+			}
+
+			return res;
+		}
+		
+		public static bigint10 constrain(bigint10 bi)
+		{
+			bigint10 n = new bigint10(bi);
+			long brAt = 0;
+			for(long i = 0; i < n.size; i++)
+				if(n.data[i] != 0)
+					brAt = i;
+			
+			brAt++;
+			brAt = math.min(brAt, n.size);
+			n.data = array.resize(n.data, brAt);
+			n.size = brAt;
+			return n;
+		}
+	}
+
+	private const long NUMBASE = 16777216;
+
+	//private const double lg_u32_max = math.log(NUMBASE);
+	private const bigint ZERO = new bigint(0);
+	private const bigint TEN = new bigint(10);
+
+	private long[] data;
+	private bool sign; // false = positive, true = negative
+	
+	public string tostring() 
+	{
+		bigint10 res = new bigint10(1);
+		bigint10 currentPower = bigint10.make(1);
+
+		bigint10 numbase = bigint10.make(NUMBASE);
+
+		for (long i = 0; i < data.length; i++)
+		{
+			res = bigint10.add(res, bigint10.mul(bigint10.make(data[i]), currentPower));
+			currentPower = bigint10.mul(currentPower, numbase);
+		}
+		
+		string output = "";
+		if(sign)
+			output = "-";
+		return output + bigint10.constrain(res).tostring(); // remove leading zeros
+	}
+	
+	public bool equals(object other)
+	{
+		if(other.gettype() != gettype())
+			return false;
+			
+		bigint oth = (bigint) other;
+	
+		if (sign != oth.sign)
+			return false;
+		if (data.length != oth.data.length)
+			return false;
+
+		for (int i = 0; i < data.length; i++)
+			if (data[i] != oth.data[i])
+				return false;
+
+		return true;
+	}
+	
+	private this()
+	{
+		this.sign = false;
+		
+	}
+	
+	public this(string numberString)
+	{
+		bigint res = new bigint(0);
+		bool sign = false;
+		long i;
+		for(i = 0; i < numberString.length; i++)
+			if((numberString[i] < '0') || (numberString[i] > '9'))
+				if((i == 0) && (numberString[i] == '-'))
+					sign = true;
+				else
+					continue; // invalid
+			else
+				res = res * TEN + long.parse(numberString[i]);
+		
+		this.sign = sign;
+		this.data = new long[res.data.length];
+		array.copy(res.data, this.data);
+	}
+	
+	public this(bigint of)
+	{
+		this.sign = of.sign;
+		this.data = new long[of.data.length];
+		array.copy(of.data, this.data, this.data.length);
+	}
+	
+	public this(long[] data, bool sign)
+	{
+		this.data = new long[data.length];
+		array.copy(data, this.data);
+		this.sign = sign;
+	}
+	
+	public this(long n)
+	{
+		this.sign = n < 0;
+		long size = 2;
+		data = new long[size];
+		array.fill(data, 0);
+		if (n == 0)
+		{
+			size = 1;
+			data[size] = 0;
+		}
+		else
+		{
+			size = 0;
+			while (n > 0)
+			{
+				data[size] = (long)(n % NUMBASE);
+				n /= NUMBASE;
+				size++;
+			}
+		}
+		data = (long[])array.resize(data, size);
+		//res.size = size;
+	}
+	
+	public this(double value)
+	{
+		long mod;
+		this.sign = value < 0;
+		this.data = new long[(long)math.ceil(math.log(value) / lg_u32_max)]; // TODO: Implement log
+		long ctr = 0;
+		while(value >= 1)
+		{
+			mod = (long)(value % NUMBASE);
+			value /= NUMBASE;
+			
+			this.data[this.data.length - ctr++] = (uint)mod;
+		}
+	}
+	
+	// This method will overflow, there is no checking whatsoever
+	public long tolong()
+	{
+		long res = 0;
+		long power = 1;
+		for(long i = 0; i < data.length; i++)
+		{
+			res += data[i] * power;
+			power *= NUMBASE;
+		}
+		return res;
+	}
+	
+	public explicit int operator this()
+	{
+		return (int)tolong();
+	}
+	
+	public explicit long operator this()
+	{
+		return tolong();
+	}
+	
+	public prefix bigint operator -()
+	{
+		bigint res = new bigint(this);
+		if(res != ZERO)
+		{
+			if(res.sign == false)
+				res.sign = true;
+			else
+				res.sign = false;
+		}
+		
+		return res;
+	}
+	
+	public postfix bigint operator !()
+	{
+		bigint res = new bigint(1);
+		for(bigint i = new bigint(1); i < this; i += 1)
+			res *= i;
+		return res;
+	}
+	
+	public bool operator >=(bigint other)
+	{
+		return greater_or_equal(this, other);
+	}
+	
+	public bool operator >(bigint other)
+	{
+		return greater(this, other);
+	}
+	
+	public bool operator <(bigint other)
+	{
+		return smaller(this, other);
+	}
+	
+	public bool operator <=(bigint other)
+	{
+		return smaller_or_equal(this, other);
+	}
+	
+	public bool operator ==(bigint other)
+	{
+		return equals(other);
+	}
+	
+	public bool operator !=(bigint other)
+	{
+		return !equals(other);
+	}
+	
+	public bigint operator +(bigint other)
+	{
+		return add(this, other);
+	}
+	
+	public bigint operator -(bigint other)
+	{
+		return sub(this, other);
+	}
+	
+	public bigint operator *(bigint other)
+	{
+		return mul(this, other);
+	}
+	
+	public bigint operator /(bigint other)
+	{
+		return div(this, other);
+	}
+	
+	public bigint operator +(long other)
+	{
+		return add(this, new bigint(other));
+	}
+	
+	public bigint operator -(long other)
+	{
+		return sub(this, new bigint(other));
+	}
+	
+	public bigint operator *(long other)
+	{
+		return mul(this, new bigint(other));
+	}
+	
+	public bigint operator /(long other)
+	{
+		return div(this, new bigint(other));
+	}
+	
+	public bigint operator **(long exp)
+	{
+		return pow(this, exp);
+	}
+	
+	public static bool greater(bigint a, bigint b)
+	{
+		if (a.sign != b.sign)
+		{
+			if ((a.sign == true) && (b.sign == false))
+				return false;
+
+			if ((a.sign == false) && (b.sign == true))
+				return true;
+		}
+
+		else
+		{
+			if (a.sign == false)
+			{
+				if (a.data.length > b.data.length)
+					return true;
+				if (a.data.length < b.data.length)
+					return false;
+				for (long i = (a.data.length) - 1; i >= 0; i--)
+					if (a.data[i] > b.data[i])
+						return true;
+					else if (a.data[i] < b.data[i])
+						return false;
+			}
+
+			else
+			{
+				if (a.data.length < b.data.length)
+					return true;
+				if (a.data.length > b.data.length)
+					return false;
+				for (long i = (a.data.length) - 1; i >= 0; i--)
+					if (a.data[i] < b.data[i])
+						return true;
+					else if (a.data[i] > b.data[i])
+						return false;
+			}
+		}
+
+		return false;
+	}
+	
+	public static bool greater_or_equal(bigint a, bigint b)
+	{
+		return greater(a, b) || equals(a, b);
+	}
+	
+	public static bool smaller(bigint a, bigint b)
+	{
+		return !greater_or_equal(a, b);
+	}
+	
+	public static bool smaller_or_equal(bigint a, bigint b)
+	{
+		return !greater(a, b);
+	}
+	
+	public static bigint add(bigint a, bigint b)
+	{
+		bigint res = null;
+
+		if ((a.sign == false) && (b.sign == false))
+		{
+			if (a >= b)
+				res = add_core(a, b);
+			else
+				res = add_core(b, a);
+
+			res.sign = false;
+		}
+
+		if ((a.sign == true) && (b.sign == true))
+		{
+			if (a <= b)
+				res = add_core(-a, -b);
+			else
+				res = add_core(-b, -a);
+
+			res.sign = true;
+		}
+
+		if ((a.sign == false) && (b.sign == true))
+		{
+			if (a >= (-b))
+			{
+				res = sub_core(a, -b);
+				res.sign = true;
+			}
+			else
+			{
+				res = sub_core(-b, a);
+				res.sign = true;
+			}
+		}
+
+		if ((a.sign == true) && (b.sign == false))
+		{
+			if ((-a) <= b)
+			{
+				res = sub_core(b, -a);
+				res.sign = false;
+			}
+			else
+			{
+				res = sub_core(-a, b);
+				res.sign = true;
+			}
+		}
+
+		return res;
+	}
+	
+	public static bigint sub(bigint a, bigint b)
+	{
+		bigint res = null;
+
+		if ((a.sign == false) && (b.sign == false))
+		{
+			if (a >= b)
+			{
+				res = sub_core(a, b);
+				res.sign = false;
+			}
+			else
+			{
+				res = sub_core(b, a);
+				res.sign = true;
+			}
+		}
+
+		if ((a.sign == true) && (b.sign == true))
+		{
+			if (a <= b)
+			{
+				res = sub_core(-a, -b);
+				res.sign = true;
+			}
+			else
+			{
+				res = sub_core(-b, -a);
+				res.sign = false;
+			}
+		}
+
+		if ((a.sign == false) && (b.sign == true))
+		{
+			if (a >= (-b))
+				res = add_core(a, -b);
+			else
+				res = add_core(-b, a);
+
+			res.sign = false;
+		}
+
+		if ((a.sign == true) && (b.sign == false))
+		{
+			if ((-a) >= b)
+				res = add_core(-a, b);
+			else
+				res = add_core(b, -a);
+
+			res.sign = true;
+		}
+
+		return res;
+	}
+	
+	public static bigint mul(bigint a, bigint b)
+	{
+		if ((a == ZERO) || (b == ZERO))
+			return ZERO;
+
+		bigint res = mul_core(abs(a), abs(b));
+		if (a.sign == b.sign)
+			res.sign = false;
+		else
+			res.sign = true;
+
+		return res;
+	}
+	
+	public static bigint div(bigint a, bigint b)
+	{
+		if (b == ZERO)
+			return null;//throw new divide_by_zero_exception("Cannot divide by zero");
+
+		if (a == ZERO)
+			return ZERO;
+		if (abs(a) < abs(b))
+			return ZERO;
+
+		bigint res;
+		if (b.data.length == 1)
+			res = div_core_single(abs(a), b.data[0]);
+		else
+			res = div_core_big(abs(a), abs(b));
+
+		if (a.sign == b.sign)
+			res.sign = false;
+		else
+			res.sign = true;
+
+		return res;
+	}
+	
+	public static bigint abs(bigint n)
+	{
+		bigint res = new bigint(n);
+		res.sign = false;
+		return res;
+	}
+	
+	public static bigint pow(bigint n, long exp)
+	{
+		if(exp < 1)
+			return new bigint(ZERO);
+		bigint res = new bigint(1);
+		for(;exp >= 0; exp--)
+			res *= n;
+		return res;
+	}
+	
+	private static bigint add_core(bigint a, bigint b)
+	{
+		bigint res = new bigint(a);
+		long trans = 0, temp;
+		long i;
+
+		for (i = 0; i < b.data.length; i++)
+		{
+			temp = res.data[i] + b.data[i] + trans;
+			res.data[i] = temp % NUMBASE;
+			trans = temp / NUMBASE;
+		}
+
+		for (i = b.data.length; ((i < a.data.length) && (trans > 0)); i++)
+		{
+			temp = res.data[i] + trans;
+			res.data[i] = temp % NUMBASE;
+			trans = temp / NUMBASE;
+		}
+
+		if (trans > 0)
+		{
+			res.data = (long[])array.resize(res.data, res.data.length + 1);
+			res.data[res.data.length - 1] = trans % NUMBASE;
+			trans /= NUMBASE;
+		}
+
+		return res;
+	}
+	
+	private static bigint sub_core(bigint a, bigint b)
+	{
+		bigint res = new bigint(a);
+		long i;
+		long temp, trans = 0;
+		bool reducible = true;
+
+		for (i = 0; i < b.data.length; i++)
+		{
+			temp = res.data[i] - b.data[i] - trans;
+			if (temp < 0)
+			{
+				trans = 1;
+				temp += NUMBASE;
+			}
+			else trans = 0;
+			res.data[i] = temp;
+		}
+
+		for (i = b.data.length; ((i < a.data.length) && (trans > 0)); i++)
+		{
+			temp = res.data[i] - trans;
+			if (temp < 0)
+			{
+				trans = 1;
+				temp += NUMBASE;
+			}
+			else trans = 0;
+			res.data[i] = temp;
+		}
+		long ressize = res.data.length;
+		while ((ressize - 1 > 0) && (reducible == true))
+		{
+			if (res.data[ressize - 1] == 0)
+				ressize--;
+			else reducible = false;
+		}
+		res.data = (long[])array.resize(res.data, ressize);
+
+		return res;
+	}
+	
+	private static bigint mul_core(bigint a, bigint b)
+	{
+		long i, j;
+		long temp, trans = 0;
+
+		bigint res = new bigint();
+		res.data = new long[a.data.length + b.data.length - 1];
+		array.fill(res.data, 0);
+
+		for (i = 0; i < a.data.length; i++)
+			if (a.data[i] != 0)
+				for (j = 0; j < b.data.length; j++)
+					if (b.data[j] != 0)
+						res.data[i + j] += (long)a.data[i] * b.data[j];
+
+		for (i = 0; i < res.data.length; i++)
+		{
+			temp = res.data[i] + trans;
+			res.data[i] = temp % NUMBASE;
+			trans = temp / NUMBASE;
+		}
+		if (trans > 0)
+		{
+			res.data = (long[])array.resize(res.data, res.data.length + 1);
+			res.data[res.data.length - 1] = trans % NUMBASE;
+			trans /= NUMBASE;
+		}
+
+		return res;
+	}
+	
+	private static bigint div_core_single(bigint a, long b)
+	{
+		bigint res = new bigint();
+		long i = a.data.length - 1;
+		long temp;
+
+		res.data = new long[a.data.length];
+		temp = a.data[i];
+
+		while (i >= 0)
+		{
+			res.data[i] = temp / b;
+			temp %= b;
+			i--;
+
+			if (i >= 0)
+				temp = temp * NUMBASE + a.data[i];
+		}
+
+		if ((res.data[res.data.length - 1] == 0) && (res.data.length != 1))
+			res.data = (long[])array.resize(res.data, res.data.length - 1);
+
+		return res;
+	}
+	
+	private static bigint div_core_big(bigint a, bigint b)
+	{
+		long k, n = a.data.length, m = b.data.length;
+		long f, qt;
+		bigint d, dq, q, r;
+
+		f = NUMBASE / (b.data[m - 1] + 1);
+		long sz = n - m + 1;
+		q = new bigint();
+		q.data = new long[n - m + 1];
+		array.fill(q.data, 0);
+		r = a * f;
+		d = b * f;
+
+		for (k = n - m; k >= 0; k--)
+		{
+			qt = core_trial(r, d, k, m);
+			dq = d * qt;
+
+			if (core_div_num_smaller(r, dq, k, m))
+			{
+				qt--;
+				dq = d * qt;
+			}
+
+			q.data[k] = qt;
+			core_diff(r, dq, k, m);
+		}
+
+		
+		if ((sz != 1) && (q.data[sz - 1] == 0))
+			sz--;
+		
+		q.data = (long[])array.resize(q.data, sz);
+		
+		return q;
+	}
+	
+	private static bool core_div_num_smaller(bigint r, bigint dq, long k, long m)
+	{
+		long i = m, j = 0;
+
+		while (i != j)
+		{
+			if (r.data[i + k] != dq.data[i])
+				j = i;
+			else i--;
+		}
+
+		if (r.data[i + k] < dq.data[i])
+			return true;
+		else
+			return false;
+	}
+	
+	private static void core_diff(bigint r, bigint dq, long k, long m)
+	{
+		long i;
+		long borrow = 0, diff;
+		
+		for (i = 0; i <= m; i++)
+		{
+			diff = r.data[i + k] - dq.data[i] - borrow + NUMBASE;
+			r.data[i + k] = diff % NUMBASE;
+			borrow = 1 - diff / NUMBASE;
+		}
+	}
+	
+	private static long core_trial(bigint r, bigint d, long k, long m)
+	{
+		long d2, km = k + m, r3, res;
+
+		r3 = ((long)r.data[km] * NUMBASE + (long)r.data[km - 1]) * NUMBASE + (long)r.data[km - 2];
+		d2 = (long)d.data[m - 1] * NUMBASE + (long)d.data[m - 2];
+		res = r3 / d2;
+		if (res < NUMBASE - 1)
+			return (int)res;
+		else
+			return NUMBASE - 1;
+	}
+}

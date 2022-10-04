@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+    <Configurations>Debug;Release;Release-Normal</Configurations>
+	  <BaseOutputPath>$(SolutionDir)\build\ModlangRuntimeSerializer\bin</BaseOutputPath>
+	  <BaseIntermediateOutputPath>$(SolutionDir)\build\ModlangRuntimeSerializer\obj</BaseIntermediateOutputPath>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <DefineConstants>A_X64</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Normal|x64'">
+    <DefineConstants>A_X64</DefineConstants>
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release-Normal|AnyCPU'">
+    <Optimize>True</Optimize>
+  </PropertyGroup>
+	<Choose>
+		<When Condition="'$(Configuration)'=='Release'">
+			<ItemGroup>
+				<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-alpha.1.22074.1" />
+			</ItemGroup>
+		</When>
+	</Choose>
+  <ItemGroup>
+    <ProjectReference Include="..\Modlang.Runtime.Serialization\Modlang.Runtime.Serialization.csproj" />
+    <ProjectReference Include="..\Modlang\Modlang.csproj" />
+  </ItemGroup>
+
+</Project>

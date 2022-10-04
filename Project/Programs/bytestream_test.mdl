@@ -1,0 +1,25 @@
+bytestream s = new bytestream();
+
+for(long i = 0; i < 120; i++)
+{
+	byte[] buf = new byte[10];
+	for(int j = 0; j < buf.length; j++)
+		buf[j] = (byte)('0' + (i % 10));
+	s.write(buf, 0, buf.length);
+	println("pos: " + s.position);
+	println(new string((char[])buf));
+}
+println();
+println("REWIND");
+println();
+s.position = 0;
+
+for(long i = 0; i < 220; i++)
+{
+	byte[] buf = new byte[7];
+	long r = s.read(buf, 0, buf.length);
+	println("r: " + r + " pos: " + s.position);
+	println(new string((char[])buf));
+}
+println();
+println("DONE");

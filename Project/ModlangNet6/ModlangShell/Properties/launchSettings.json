@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "ModlangShell": {
+      "commandName": "Project",
+      "commandLineArgs": "--printall",
+      "workingDirectory": "$(SolutionDir)\\..\\"
+    }
+  }
+}

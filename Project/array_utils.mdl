@@ -1,0 +1,58 @@
+public class array
+{
+	public static int index_of(object[] haystack, object needle)
+	{
+		for(int i = 0; i < haystack.length; i++)
+			if(haystack[i] == needle)
+				return i;
+		return -1;
+	}
+	
+	public static bool in(object[] haystack, object needle)
+	{
+		for(int i = 0; i < haystack.length; i++)
+			if(haystack[i] == needle)
+				return true;
+		return false;
+	}
+	
+	public static void copy(object[] source, object[] destination)
+	{
+		copy(source, destination, destination.length);
+	}
+	
+	public static void copy(object[] source, object[] destination, long length)
+	{
+		copy(source, 0, destination, 0, length);
+	}
+	
+	public static void copy(object[] source, long sourceIdx, object[] destination, long destIdx, long length)
+	{
+		for(long i = 0; i < length; i++)
+			destination[i + destIdx] = source[i + sourceIdx];
+	}
+	
+	public static bool equal(object[] a, object[] b)
+	{
+		if(a.length != b.length)
+			return false;
+		for(long i = 0; i < a.length; i++)
+			if(a[i] != b[i])
+				return false;
+		
+		return true;
+	}
+	
+	public static object[] resize(object[] value, long size)
+	{
+		object[] result = new object[size];
+		copy(value, result, math.min(value.length, size));
+		return result;
+	}
+	
+	public static void fill(object[] destination, object value)
+	{
+		for(long i = 0; i < destination.length; i++)
+			destination[i] = value;
+	}
+}
