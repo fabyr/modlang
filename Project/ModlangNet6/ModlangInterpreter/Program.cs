@@ -51,7 +51,7 @@ namespace ModlangInterpreter
             CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
             //long start = 0, end = 0;
-            const string filename = @"Programs/million.mdl";
+            const string filename = @"Programs/test.mdl";
             Modlang.Runtime.Environment env = new Modlang.Runtime.Environment();
             env.Init(EnvironmentInitializer.GetDefault(@"core.mdl"));
             //env.ExecutionOptions.PassOutMlNull = false;
