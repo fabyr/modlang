@@ -1,0 +1,65 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "ModlangInterpreter Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/build/ModlangInterpreter/bin/Debug/net6.0/ModlangInterpreter.dll",
+            "args": [
+                "--printall"
+            ],
+            "cwd": "${workspaceFolder}/../",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "ModlangInterpreter Launch Release",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build release",
+            "program": "${workspaceFolder}/build/ModlangInterpreter/bin/x64/Release-Normal/net6.0/ModlangInterpreter.dll",
+            "args": [
+                "--printall"
+            ],
+            "cwd": "${workspaceFolder}/../",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "ModlangShell Launch",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/build/ModlangShell/bin/Debug/net6.0/ModlangShell.dll",
+            "args": [
+                "--printall"
+            ],
+            "cwd": "${workspaceFolder}/../",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": "ModlangShell Launch Release",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build release",
+            "program": "${workspaceFolder}/build/ModlangShell/bin/x64/Release-Normal/net6.0/ModlangShell.dll",
+            "args": [
+                "--printall"
+            ],
+            "cwd": "${workspaceFolder}/../",
+            "console": "externalTerminal",
+            "stopAtEntry": false
+        },
+        {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach"
+        }
+    ]
+}
