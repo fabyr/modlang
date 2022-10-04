@@ -43,6 +43,10 @@ This made for some pretty complicated and sloppish parsing code.
 The normal operators (such as +, -, *, /) have all predefined precedences.
 The user defined operators always have the lowest precedence and come last.
 
+## Running
+I have included my vscode launch configurations.
+The workspace folder must be [/Project/ModlangNet6/](/Project/ModlangNet6/).
+
 ### Standard library
 I have created a small standard library in my programming language.
 It contains the basic types and core functions such as:
