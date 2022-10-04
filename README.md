@@ -28,7 +28,7 @@ There are 3 executable programs:
 The other projects are the core of functionality. They are also split up:
 - Modlang
   * Contains the code responsible for Lexing and Parsing.
-- Modlang.CommunUtilities
+- Modlang.CommonUtilities
   * Minor shared utilities
 - Modlang.Runtime
   * Contains the code responsible for executing any parsed program.
@@ -149,3 +149,20 @@ for(long i = 0; i < 220; i++)
 println();
 println("DONE");
 ```
+
+## Screenshots
+(In the Shell-Program, if the argument `--printall` is supplied, every statement's return value will be printed. Even non-returning statements have return values, in their case its always `<NULL>`)
+
+![For loop test](/Screenshots/terminal1.png)
+
+![Mandelbrot test](/Screenshots/terminal2.png)
+
+When importing a file (`using`), if it is in the working directory, the ".mdl" can be omitted.
+
+![Base64 test](/Screenshots/terminal3.png)
+
+![Function declaration test](/Screenshots/terminal4.png)
+
+Benchmark test (Older test on windows):
+
+![Windows mandelbrot program benchmark](/Screenshots/windows_mandelbrot_test.png)
