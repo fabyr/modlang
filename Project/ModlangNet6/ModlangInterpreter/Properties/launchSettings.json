@@ -1,8 +1,0 @@
-{
-  "profiles": {
-    "ModlangInterpreter": {
-      "commandName": "Project",
-      "workingDirectory": "$(SolutionDir)\\..\\"
-    }
-  }
-}
