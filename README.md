@@ -6,6 +6,8 @@ I'm sorry i have no imagination 😢
 
 It is by no means polished or finished and there are a lot of errors and edge cases.
 The code is at some points also really dirty. I did not really do any sort of planning.
+I did not use any references and basically came up with everything myself. Except the recursive expression parser, that's a thing i had to look up :D
+A few informative websites here, a lot of reading there, and the code would probably improve a lot in quality. Maybe.
 
 I just put it on github to have easy access to it. Private repo is unideal in my case.
 
